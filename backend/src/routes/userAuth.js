@@ -1,15 +1,18 @@
 const express= require("express");
-const appRouter= express.Router();
+const authRouter= express.Router();
+const {register,login}=require("../controllers/userAuthent")
 
 // register
-appRouter.post("/register",register);
+authRouter.post("/register",register);
 
 // appRouter.post("/register",function(req,res){
 // })
 
 //login
-appRouter.post("/login",login);
+authRouter.post("/login",login);
 //logout
-appRouter.post("/logout",logout);
-// getprofile
-appRouter.post("/getProfile",getProfile);
+// authRouter.post("/logout",logout);
+// // getprofile
+// authRouter.post("/getProfile",getProfile);
+
+module.exports=authRouter

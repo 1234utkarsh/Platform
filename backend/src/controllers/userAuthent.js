@@ -48,3 +48,5 @@ const login=async(req,res)=>{
 res.status(401).send("Error:"+err)
    }
 }
+
+module.exports={register,login};
