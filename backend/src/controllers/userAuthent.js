@@ -2,6 +2,7 @@ const User = require("../models/user");
 const validate = require("../utils/validate");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const redisClient=require("../config/redis");
 
 const register = async (req, res) => {
   try {
@@ -49,4 +50,20 @@ res.status(401).send("Error:"+err)
    }
 }
 
-module.exports={register,login};
+const logout=async(req,res)=>{
+   try{
+      // validate the token (done)
+   const {token}=req.cookies;
+   const payload=jwt.decode(token);
+   await redisClient.set(`token:${token}`,'Blocked');
+   await redisClient.expireAt(`token:${token}`,payload.exp);
+   // add token into the redis blocklist
+   // cookies clear kar dena
+   res.cookie("token",null,{expires:new Date(Date.now())});
+   res.send("Logged Out Successfully");
+   }catch(err){
+      res.status(503).send("Error: "+err);
+   }
+}
+
+module.exports={register,login,logout};
