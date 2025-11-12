@@ -13,13 +13,16 @@ const register = async (req, res) => {
     if (existingUser) {
       return res.status(400).json({ message: "Email already exists" });
     }
+
+      req.body.password = await bcrypt.hash(password, 10);
+      req.body.role='user'
     // create user
 
     const user = await User.create(req.body);
-    req.body.password = await bcrypt.hash(password, 10);
+  
 
     // give jwt token to user
-    const token = jwt.sign({ id:user._id,emailId:emailId }, process.env.JWT_SECRET_KEY, {
+    const token = jwt.sign({ id:user._id,emailId:emailId,role:'user' }, process.env.JWT_SECRET_KEY, {
       expiresIn: 60 * 60,
     });
     res.cookie("token", token, { maxAge: 60 * 60 * 1000 });
@@ -42,7 +45,7 @@ const login=async(req,res)=>{
      const match= bcrypt.compare(password,user.password)
      if(!match)
       throw new Error("Invalid Credentials");
-   const token=jwt.sign({id:user._id, emailId:emailId},process.env.JWT_SECRET_KEY,{expiresIn:60*60})
+   const token=jwt.sign({id:user._id, emailId:emailId,role:user.role},process.env.JWT_SECRET_KEY,{expiresIn:60*60})
    res.cookie('token',token,{maxAge:60*60*1000})
    res.status(200).send("logged in successfully")
    }catch(err){
@@ -66,4 +69,25 @@ const logout=async(req,res)=>{
    }
 }
 
-module.exports={register,login,logout};
+const adminRegister=async(req,res)=>{
+   try{
+      validate(req.body);
+      const{firstName,emailId,password}=req.body;
+
+      req.body.password=await bcrypt.hash(password,10);
+
+      const user=await User.create(req.body);
+      const token=jwt.sign({_id:user._id,emailId:emailId,role:user.role},process.env.JWT_KEY,{expiresIn:60*60});
+      res.cookie('token',token,{maxAge:60*60*1000});
+      res.status(201).send("User registered successfully");
+
+   }catch(err){
+      res.status(400).send("Error:"+err);
+
+   }
+
+}
+
+
+
+module.exports={register,login,logout,adminRegister};
