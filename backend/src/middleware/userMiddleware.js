@@ -11,11 +11,11 @@ const userMiddleware = async (req, res, next) => {
     const payload = jwt.verify(token, process.env.JWT_SECRET_KEY);
 
     // Correct field is "id" (NOT "_id")
-    const { id } = payload;
-    if (!id) throw new Error("Invalid token");
+    const { _id } = payload;
+    if (!_id) throw new Error("Invalid token");
 
     // Check user in database
-    const result = await User.findById(id);
+    const result = await User.findById(_id);
     if (!result) throw new Error("User doesn't exist");
 
     // Check if token is blocked in Redis

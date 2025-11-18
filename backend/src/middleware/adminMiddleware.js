@@ -8,7 +8,7 @@ const adminMiddleware=async(req,res,next)=>{
     if(!token)
       throw new Error("Token is not present");
 
-    const payload=jwt.verify(token,process.env.JWT_KEY);
+    const payload=jwt.verify(token,process.env.JWT_SECRET_KEY);
 
     const {_id}=payload;
 
