@@ -173,4 +173,50 @@ const updateProblem=async(req,res)=>{
    }
 }
 
-module.exports={createProblem,updateProblem}
+const deleteProblem=async(req,res)=>{
+  const {id}=req.params;
+  try{
+    if(!id)
+     return res.status(400).send("Missing Id field");  // BAD REQUEST
+    
+    const deletedProblem= await Problem.findByIdAndDelete(id);
+    
+    if(!deletedProblem)
+      return res.status(404).send("Problem is Missing"); //Not Found
+
+    return res.status(200).send("Successfully Deleted"); // OK
+  }catch(err){
+    res.status(500).send("Error: "+err); // internal server error
+  }
+}
+
+const getProblemById=async(req,res)=>{
+  const {id}=req.params;
+  try{
+    if(!id)
+      return res.status(400).send("Missing Id") // BAD REQUEST
+
+    const getProblem= await Problem.findById(id);
+
+    if(!getProblem)
+      return res.status(404).send("Problem is Missing"); // Not found
+
+    return res.status(200).send(getProblem)  // OK
+  }catch(err){
+    return res.status(500).send("error "+err);  // INTERNAL SERVER ERROR
+  }
+}
+
+const getAllProblem=async(req,res)=>{
+  try{
+    const getProblem = await Problem.find({});
+    if(getProblem.length==0)
+      return res.status(404).send("Problem is Missing");
+
+    return res.status(200).send(getProblem);
+  }catch(err){
+    return res.status(500).send("Error" +err);
+  }
+}
+
+module.exports={createProblem,updateProblem,deleteProblem,getProblemById,getAllProblem}
