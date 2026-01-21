@@ -49,9 +49,11 @@ const submissionSchema=new Schema({
 },{
   timestamps: true
 })
-
-submissionSchema.index({userId:1 , problemId:1});
-
+// if data is duplicate then also indexing occur
+// agar hme lgta hai ki ye data/field hmlog baar baar use kar rhe hai to uske liye hme indexing use krni chahiye
+// compound index
+submissionSchema.index({userId:1 , problemId:1}); //  1 means-> arrange userid and problemid in ascending order.
+// -1 means-> arrange in descending order.
 
 const Submission= mongoose.model('submission',submissionSchema);
 

@@ -2,7 +2,7 @@ const express= require("express");
 const problemRouter=express.Router();
 const adminMiddleware=require("../middleware/adminMiddleware");
 const userMiddleware= require("../middleware/userMiddleware")
-const {createProblem,updateProblem,deleteProblem,getProblemById,getAllProblem,solvedAllProblembyUser}=require("../controllers/createProblem")
+const {createProblem,updateProblem,deleteProblem,getProblemById,getAllProblem,solvedAllProblembyUser,submittedProblem}=require("../controllers/createProblem")
 
 problemRouter.post("/create",adminMiddleware,createProblem);
 problemRouter.put("/update/:id",adminMiddleware,updateProblem);
@@ -14,5 +14,6 @@ problemRouter.get("/problemById/:id",userMiddleware,getProblemById);
 problemRouter.get("/getAllProblem",userMiddleware,getAllProblem);
 // // route to fetch all problem solved by user
 problemRouter.get("/problemSolvedByUser",userMiddleware, solvedAllProblembyUser);
+problemRouter.get("/submittedProblem/:pid",userMiddleware,submittedProblem);
 
 module.exports=problemRouter;

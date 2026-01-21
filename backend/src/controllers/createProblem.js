@@ -6,6 +6,7 @@ const {
 
 const Problem=require("../models/problem")
 const User= require("../models/user")
+const Submission=require("../models/submission");
 
 const createProblem = async (req, res) => {
   const {
@@ -234,4 +235,20 @@ const solvedAllProblembyUser=async(req,res)=>{
     }
 }
 
-module.exports={createProblem,updateProblem,deleteProblem,getProblemById,getAllProblem,solvedAllProblembyUser}
+const submittedProblem=async(req,res)=>{
+  try{
+    const userid=req.result._id;
+    const problemid=req.result.pid;
+
+  const ans=  await Submission.find({userid,problemid});
+  if(ans.length==0)
+    res.status(200).send("No submission is present");
+
+  res.status(200).send(ans);
+
+  }catch(err){
+    res.status(500).send("Internal Server Error");
+  }
+}
+
+module.exports={createProblem,updateProblem,deleteProblem,getProblemById,getAllProblem,solvedAllProblembyUser,submittedProblem}
