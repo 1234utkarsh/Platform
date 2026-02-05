@@ -29,8 +29,16 @@ const register = async (req, res) => {
         expiresIn: 60 * 60,
       }
     );
+    const reply={
+      firstName:user.firstName,
+      emailId:user.emailId,
+      _id:user._id
+    }
     res.cookie("token", token, { maxAge: 60 * 60 * 1000 });
-    res.status.send("user registered successfully");
+    res.status(201).json({
+      user:reply,
+      message:"Register Successfully"
+    })
   } catch (err) {
     res.status(400).send("Error: " + err);
   }
@@ -45,13 +53,24 @@ const login = async (req, res) => {
     if (!user) throw new Error("you are not registered . please registered.");
     const match = bcrypt.compare(password, user.password);
     if (!match) throw new Error("Invalid Credentials");
+
+    const reply={
+      firstName:user.firstName,
+      emailId:user.emailId,
+      _id:user._id
+    }
+
+
     const token = jwt.sign(
       { _id: user._id, emailId: emailId, role: user.role },
       process.env.JWT_SECRET_KEY,
       { expiresIn: 60 * 60 }
     );
     res.cookie("token", token, { maxAge: 60 * 60 * 1000 });
-    res.status(200).send("logged in successfully");
+    res.status(201).json({
+      user:reply,
+      message:"Loggin Successfully"
+    })
   } catch (err) {
     res.status(401).send("Error:" + err);
   }
