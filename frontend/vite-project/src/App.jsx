@@ -1,27 +1,35 @@
 import {  Routes, Route, Navigate } from "react-router";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
-import Home from "./pages/Home";
+import Homepage from "./pages/HomePage";
 import { useDispatch, useSelector } from "react-redux";
 import { checkAuth } from "./authSlice";
 import {useEffect} from "react";
+import AdminPanel from "./pages/AdminPanel";
 
 function App(){
 
   const dispatch=useDispatch();
-  const{isAuthenticated}=useSelector((state)=>state.auth);
+  const{isAuthenticated, user, loading}=useSelector((state)=>state.auth);
 
   //  --- check initial authentication
   useEffect(()=>{
     dispatch(checkAuth());
   },[dispatch]);
 
+   if (loading) {
+    return <div className="min-h-screen flex items-center justify-center">
+      <span className="loading loading-spinner loading-lg"></span>
+    </div>;
+  }
+
 
   return (
     <Routes>
-      <Route path="/" element={isAuthenticated?<Home></Home>:<Navigate to="/signup"/>}></Route>
+      <Route path="/" element={isAuthenticated?<Homepage></Homepage>:<Navigate to="/signup"/>}></Route>
       <Route path="/login" element={isAuthenticated?<Navigate to="/"/>:<Login></Login>}></Route>
       <Route path="/signup" element={isAuthenticated?<Navigate to="/"/>:<Signup></Signup>}></Route>
+      <Route path="/admin" element={<AdminPanel/>}></Route>
     </Routes>
   )
 }
